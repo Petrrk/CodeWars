@@ -1,14 +1,17 @@
 ﻿using CodeWars1.Factory;
+using CodeWars1.Factory.Entities;
+using CodeWars1.Utilities;
 using System.Reflection;
 
 internal class Program
 {
+    private static ConsoleHelper consoleHelper = new ConsoleHelper();
+
     private static void Main(string[] args)
     {
         var types = GetAllTypesThatImplementKataInterface<IKata>();
         var classes = CreateDictionaryAndPrint(types);
-        //PrintPrompt(types, classes);
-        IKata kata = GetKataFromFactory(classes, Convert.ToInt16(Console.ReadLine()));
+        IKata kata = GetKataFromFactory(classes);
         
         while (true)
         {
@@ -21,30 +24,34 @@ internal class Program
         }
     }
 
-    private static IKata GetKataFromFactory(Dictionary<int, string> classes, int chosenKata)
+    private static IKata GetKataFromFactory(Dictionary<int, KataName> classes)
     {
-        var kataFactory = new KataFactory();
-
-        var kata = kataFactory.GetKata(classes[chosenKata]);
-
-        if (kata == null)
+        var chosenKata = Console.ReadLine();
+        
+        if (int.TryParse(chosenKata, out int i) || chosenKata is not null)
         {
-            return null;
-        }
+            var kataFactory = new KataFactory();
 
-        return kata;
+            var kata = kataFactory.GetKata(classes[Convert.ToInt32(chosenKata)]);
+
+            return kata ?? null;
+        };
+        
+        throw new Exception("CISLO!!!!");
     }
 
-    private static Dictionary<int, string> CreateDictionaryAndPrint(IEnumerable<Type> types)
+    private static Dictionary<int, KataName> CreateDictionaryAndPrint(IEnumerable<Type> types)
     {
         int count = 0;
-        Dictionary<int, string> classes = new Dictionary<int, string>();
+        Dictionary<int, KataName> classes = new Dictionary<int, KataName>();
+        KataName kataName;
 
         foreach (var type in types)
         {
             IKata instance = (IKata)Activator.CreateInstance(type);
-            classes.Add(count, instance.GetKataName());
-            Console.WriteLine(count + " " + type.Name);
+            kataName = instance.GetKataName();
+            classes.Add(count, kataName);
+            Console.WriteLine(count + " " + kataName.GetDescription() + " - " + instance.CompletionStatus.GetDescription());
             count++;
         }
         Console.WriteLine("\n");

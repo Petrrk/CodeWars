@@ -1,15 +1,20 @@
 ﻿using CodeWars1.Factory;
+using CodeWars1.Factory.Entities;
 
 namespace CodeWars1.Katas
 {
     public class PrimeNumber : IKata
     {
-        public string GetKataName()
+        public OutputType OutputType => OutputType.Bool;
+
+        public CompletionStatus CompletionStatus => CompletionStatus.Forfeited;
+
+        public KataName GetKataName()
         {
-            return "PrimeNumber";
+            return KataName.PrimeNumber;
         }
 
-        public bool Execute(string n)
+        public string Execute(string n)
         {
             int value;
             if (int.TryParse(n, out value))
@@ -18,7 +23,7 @@ namespace CodeWars1.Katas
             }
             if (value <= 0)
             {
-                return false;
+                return "False";
             }
 
             bool sudy;
@@ -39,12 +44,12 @@ namespace CodeWars1.Katas
                 else
                 {
                     Console.WriteLine("fpici");
-                    return false;
+                    return "False";
                 }
                 Console.WriteLine("good" + mezi);
             }
 
-            return true;
+            return "True";
         }
     }
 }
